@@ -8,7 +8,7 @@
 dialogPath="/usr/local/bin/dialog"
 
 # How many seconds do you want to delay the OK button. Users will not be able to dismiss the Dialog window for this many seconds.
-delayButtonDuration=180
+delayButtonDuration=60
 
 dialogTitle="IT security alert"
 dialogMessage="We've detected suspicious activity on your computer.  \nPlease stop your work and contact IT for guidance."
@@ -48,12 +48,12 @@ function delayed_button_enablement(){
     --messagealignment center \
     --position center \
     --button1disabled \
-    --blurscreen "true" \
+    --blurscreen \
     --iconalpha 1.0 \
     --centericon \
-    --width 35% \
+    --width 600 \
     --ontop "true" \
-    --height 40% \
+    --height 400 \
 
     #Very important that this part comes immediately after the dialog command
     dialogResults=$?

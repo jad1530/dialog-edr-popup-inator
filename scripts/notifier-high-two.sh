@@ -27,14 +27,13 @@ button1text="Continue"
     --messagealignment center \
     --position center \
     --button1disabled \
+    --blurscreen \
     --iconalpha 1.0 \
     --centericon \
-    --width 35% \
+    --width 600 \
     --ontop "true" \
-    --height 40% \
-    --blurscreen \
+    --height 400 \
     --progress \
-    -b \
 
     #Very important that this part comes immediately after the dialog command
     dialogResults=$?

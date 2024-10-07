@@ -20,6 +20,7 @@ dialogCommandFile="/var/tmp/dialog.log"
 # Button 1 Text
 button1text="Continue"
 
+
 # execute a dialog command
 function dialog_command(){
     /bin/echo "$@"  >> "$dialogCommandFile"
@@ -38,20 +39,6 @@ function delayed_button_enablement(){
     dialog_command "button1: enable"
 }
 
-#restart command
-function exec_restart()
-{
-
-log_message "Executing restart!"
-
-#This is the restart command. Thank you Dan Snelson: https://snelson.us/2022/07/log-out-restart-shut-down/
-
-osascript -e 'tell app "loginwindow" to «event aevtrrst»'
-
-}
-
-fi
-
 (
 "delayed_button_enablement" & "$dialogPath" \
     --title "$dialogTitle" \
@@ -64,13 +51,13 @@ fi
     --button1disabled \
     --iconalpha 1.0 \
     --centericon \
-    --width 35% \
+    --width 600 \
     --ontop "true" \
-    --height 40% \
+    --height 400 \
     --timer 120 \
     --hidetimerbar \
-    --button2text "Restart" \
-    -b
+    --button2text "Restart now" \
+    --button1text "Continue" \
 
     #Very important that this part comes immediately after the dialog command
     dialogResults=$?
@@ -80,6 +67,7 @@ fi
     if [ "$dialogResults" = 0 ]; then
         echo "User closed window - all done."
     elif [ "$dialogResults" = 2 ]; then
+        sleep 5
         osascript -e 'tell app "loginwindow" to «event aevtrrst»'
         echo "User selected restart button."
     elif [ "$dialogResults" = 10 ]; then
