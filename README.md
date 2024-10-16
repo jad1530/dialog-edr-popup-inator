@@ -1,5 +1,4 @@
-# dialog-edr-popup-inator
-swiftDialog based popups to deploy as scripts when doing things with EDR.
+# swiftDialog EDR overlays (aka the dialog-edr-popup-inator)
 I set up these scripts to deploy bold pop-ups to users for a couple of scenarios that may happen when I'm investigating or remediating a machine:
 + If our EDR detecs a threat of "high" or greater and thus warrants temporarily blocking out the user while we investigate and remediate
 + As an extra automated "warning" during a detection.
