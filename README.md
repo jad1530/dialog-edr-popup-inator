@@ -9,5 +9,8 @@ These scripts were inspired by a [DEPNotify workflow](https://www.jamf.com/blog/
 
 These scripts are designed to work with Crowdstrike, utilizing the scripting functionality in Real-Time Response (RTR) and the ability to expose RTR scripts to Fusion workflows.
 However, they *should* work with any endpoint protection product or EDR that can send and execute shell scripts on macOS.
+They're still a work in progress so keep that in mind if you decide to use em!
 
-
+## Things to do
+* Update the timeout logic to terminate if an exit key was pressed or if a button was pressed early.
+* Update progresso.sh with actual progress determinants
