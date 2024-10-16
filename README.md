@@ -5,7 +5,7 @@ I set up these scripts to deploy bold pop-ups to users for a couple of scenarios
 + As an extra automated "warning" during a detection.
 + To give users feedback while we're remediating a threat
 
-These scripts were inspired by a (DEPNotify workflow)[https://www.jamf.com/blog/jamf-protect-remediation-workflows/] that I'd seen in Jamf Protect before.
+These scripts were inspired by a [DEPNotify workflow](https://www.jamf.com/blog/jamf-protect-remediation-workflows/) that I'd seen in Jamf Protect before.
 
 These scripts are designed to work with Crowdstrike, utilizing the scripting functionality in Real-Time Response (RTR) and the ability to expose RTR scripts to Fusion workflows.
 However, they *should* work with any endpoint protection product or EDR that can send and execute shell scripts on macOS.
