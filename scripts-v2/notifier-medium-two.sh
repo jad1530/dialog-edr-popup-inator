@@ -38,6 +38,51 @@ function delayed_button_enablement(){
     dialog_command "button1: enable"
 }
 
+
+# Function to check for Dialog process, get its PID, and stop it if running
+check_and_stop_dialog() {
+    dialog_pid=$(pgrep -x "Dialog")
+    if [ -n "$dialog_pid" ]; then
+        echo "Dialog process is running with PID: $dialog_pid. Stopping it..."
+        kill $dialog_pid
+        
+        # Wait for the process to stop
+        for i in {1..5}; do
+            if ! pgrep -x "Dialog" > /dev/null; then
+                echo "Dialog process has been stopped successfully."
+                return 0
+            fi
+            sleep 1
+        done
+        
+        # If process is still running after 5 seconds, force kill it
+        if pgrep -x "Dialog" > /dev/null; then
+            echo "Dialog process did not stop gracefully. Force killing it..."
+            kill -9 $dialog_pid
+            sleep 1
+        fi
+        
+        if ! pgrep -x "Dialog" > /dev/null; then
+            echo "Dialog process has been forcefully stopped."
+            return 0
+        else
+            echo "Failed to stop Dialog process. Exiting script."
+            return 1
+        fi
+    else
+        echo "Dialog process is not running. Continuing with the script."
+        return 0
+    fi
+}
+
+# Call the function to check for Dialog and stop it if running
+if ! check_and_stop_dialog; then
+    exit 1
+fi
+
+# If Dialog was not running or was successfully stopped, continue with the rest of the script
+echo "Proceeding with the script execution."
+
 (
 "delayed_button_enablement" & "$dialogPath" \
     --title "$dialogTitle" \

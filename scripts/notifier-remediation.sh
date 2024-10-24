@@ -11,7 +11,7 @@ dialogPath="/usr/local/bin/dialog"
 #Initial text
 dialogTitle="Remediation in progress"
 dialogMessage="We're working on removing threats from your computer.  \nPlease stand by.  \n\nThis message will remain on your screen until the issue is resolved."
-dialogInfoText="This is an official message from JWA IT."
+dialogInfoText="This is an official message from IT."
 dialogIcon="SF=washer.circle.fill,color=blue"
 
 #identify the remediation stages

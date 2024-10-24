@@ -12,7 +12,7 @@ delayButtonDuration=15
 
 dialogTitle="Remediation complete"
 dialogMessage="We've successfully removed threats from your computer.  \nPlease save your work and reboot.  \nYou may dismiss this message in a few seconds."
-dialogInfoText="This is an official message from JWA IT."
+dialogInfoText="This is an official message from IT."
 dialogIcon="SF=checkmark.circle.fill,color=green,weight=medium"
 
 dialogCommandFile="/var/tmp/dialog.log"
