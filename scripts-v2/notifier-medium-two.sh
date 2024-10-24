@@ -6,25 +6,22 @@
 #this alert style is intended to represent a "medium" severity alert.
 
 dialogPath="/usr/local/bin/dialog"
-
-# How many seconds do you want to delay the OK button. Users will not be able to dismiss the Dialog window for this many seconds.
+# How many seconds do you want to delay the OK button
 delayButtonDuration=60
-
 dialogTitle="IT security alert"
-dialogMessage="We've detected suspicious activity on your computer.  \nPlease stop your work and contact IT for guidance."
+dialogMessage="We've detected suspicious activity on your computer. \nPlease stop your work and contact IT for guidance."
 dialogInfoText="This is an official message from IT."
 dialogIcon="SF=exclamationmark.triangle.fill,color=orange,weight=medium"
-
 dialogCommandFile="/var/tmp/dialog.log"
-
 # Button 1 Text
 button1text="Continue"
 
+# Create a flag file to track dialog state
 dialogFlagFile="/var/tmp/dialog_running.flag"
 
 # execute a dialog command
 function dialog_command(){
-    /bin/echo "$@"  >> "$dialogCommandFile"
+    /bin/echo "$@" >> "$dialogCommandFile"
     log_message "$@"
     sleep .1
 }
@@ -55,26 +52,24 @@ check_and_stop_dialog() {
     if [ -n "$dialog_pid" ]; then
         echo "Dialog process is running with PID: $dialog_pid. Stopping it..."
         kill $dialog_pid
-        
         # Wait for the process to stop
         for i in {1..5}; do
             if ! pgrep -x "Dialog" > /dev/null; then
                 echo "Dialog process has been stopped successfully."
+                # Remove flag file if it exists
+                rm -f "$dialogFlagFile"
                 return 0
             fi
             sleep 1
         done
-        
         # If process is still running after 5 seconds, force kill it
         if pgrep -x "Dialog" > /dev/null; then
             echo "Dialog process did not stop gracefully. Force killing it..."
             kill -9 $dialog_pid
             sleep 1
         fi
-        
         if ! pgrep -x "Dialog" > /dev/null; then
             echo "Dialog process has been forcefully stopped."
-
             # Remove flag file if it exists
             rm -f "$dialogFlagFile"
             return 0
@@ -95,29 +90,31 @@ fi
 
 # If Dialog was not running or was successfully stopped, continue with the rest of the script
 echo "Proceeding with the script execution."
-
 (
-"delayed_button_enablement" & "$dialogPath" \
-    --title "$dialogTitle" \
-    --message "$dialogMessage" \
-    --icon "$dialogIcon" \
-    --infotext "$dialogInfoText" \
-    --messageposition center \
-    --messagealignment center \
-    --position center \
-    --button1disabled \
-    --blurscreen \
-    --iconalpha 1.0 \
-    --centericon \
-    --width 600 \
-    --ontop "true" \
-    --height 400 \
+    "delayed_button_enablement" &
+    "$dialogPath" \
+        --title "$dialogTitle" \
+        --message "$dialogMessage" \
+        --icon "$dialogIcon" \
+        --infotext "$dialogInfoText" \
+        --messageposition center \
+        --messagealignment center \
+        --position center \
+        --button1disabled \
+        --blurscreen \
+        --iconalpha 1.0 \
+        --centericon \
+        --width 600 \
+        --ontop "true" \
+        --height 400 \
 
     #Very important that this part comes immediately after the dialog command
     dialogResults=$?
-
     echo "Dialog exited with the following code: $dialogResults"
-
+    
+    # Remove the flag file to stop the counter when dialog exits
+    rm -f "$dialogFlagFile"
+    
     if [ "$dialogResults" = 0 ]; then
         echo "User acknowledged, continue investigation."
     elif [ "$dialogResults" = 10 ]; then
@@ -130,5 +127,4 @@ echo "Proceeding with the script execution."
         exit "$dialogResults"
     fi
 )&
-
 exit
