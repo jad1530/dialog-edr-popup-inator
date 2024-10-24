@@ -20,6 +20,8 @@ dialogCommandFile="/var/tmp/dialog.log"
 # Button 1 Text
 button1text="Continue"
 
+dialogFlagFile="/var/tmp/dialog_running.flag"
+
 # execute a dialog command
 function dialog_command(){
     /bin/echo "$@"  >> "$dialogCommandFile"
@@ -28,16 +30,24 @@ function dialog_command(){
 }
 
 function delayed_button_enablement(){
-
-    while [ $delayButtonDuration -gt 0 ]; do
+    # Create flag file when counter starts
+    touch "$dialogFlagFile"
+    
+    while [ $delayButtonDuration -gt 0 ] && [ -f "$dialogFlagFile" ]; do
         dialog_command "button1text: Dismiss in $delayButtonDuration..."
         sleep .9
         delayButtonDuration=$(( delayButtonDuration -1 ))
     done
-    dialog_command "button1text: $button1text"
-    dialog_command "button1: enable"
+    
+    # Only update button if dialog is still running
+    if [ -f "$dialogFlagFile" ]; then
+        dialog_command "button1text: $button1text"
+        dialog_command "button1: enable"
+    fi
+    
+    # Clean up flag file
+    rm -f "$dialogFlagFile"
 }
-
 
 # Function to check for Dialog process, get its PID, and stop it if running
 check_and_stop_dialog() {
@@ -64,6 +74,9 @@ check_and_stop_dialog() {
         
         if ! pgrep -x "Dialog" > /dev/null; then
             echo "Dialog process has been forcefully stopped."
+
+            # Remove flag file if it exists
+            rm -f "$dialogFlagFile"
             return 0
         else
             echo "Failed to stop Dialog process. Exiting script."
