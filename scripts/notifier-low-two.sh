@@ -12,7 +12,7 @@ delayButtonDuration=15
 
 dialogTitle="IT security alert"
 dialogMessage="We've detected suspicious activity on your computer.  \nPlease contact IT for guidance."
-dialogInfoText="This is an official message from JWA IT."
+dialogInfoText="This is an official message from IT."
 dialogIcon="SF=exclamationmark.circle.fill,color=yellow,weight=medium"
 
 dialogCommandFile="/var/tmp/dialog.log"

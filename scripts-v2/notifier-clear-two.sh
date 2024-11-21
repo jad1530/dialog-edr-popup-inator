@@ -3,22 +3,23 @@
 
 #Huge shoutout to Trevor Sysock (@BigMacAdmin on Slack) and @adamcodega for helping with these
 #Script to launch swiftDialog alerts within Crowdstrike either within RTR or in a Fusion workflow.
-#this alert style is intended to represent a "medium" severity alert.
+#this alert style is intended to represent an "all clear".
 
 dialogPath="/usr/local/bin/dialog"
 
 # How many seconds do you want to delay the OK button. Users will not be able to dismiss the Dialog window for this many seconds.
-delayButtonDuration=60
+delayButtonDuration=15
 
-dialogTitle="IT security alert"
-dialogMessage="We've detected suspicious activity on your computer.  \nPlease stop your work and contact IT for guidance."
-dialogInfoText="This is an official message from IT."
-dialogIcon="SF=exclamationmark.triangle.fill,color=orange,weight=medium"
+dialogTitle="Remediation complete"
+dialogMessage="We've successfully removed threats from your computer.  \nPlease save your work and reboot.  \nYou may dismiss this message in a few seconds."
+dialogInfoText="This is an official message from JWA IT."
+dialogIcon="SF=checkmark.circle.fill,color=green,weight=medium"
 
 dialogCommandFile="/var/tmp/dialog.log"
 
 # Button 1 Text
 button1text="Continue"
+
 
 # execute a dialog command
 function dialog_command(){
@@ -48,12 +49,15 @@ function delayed_button_enablement(){
     --messagealignment center \
     --position center \
     --button1disabled \
-    --blurscreen \
     --iconalpha 1.0 \
     --centericon \
     --width 600 \
     --ontop "true" \
     --height 400 \
+    --timer 120 \
+    --hidetimerbar \
+    --button2text "Restart now" \
+    --button1text "Continue" \
 
     #Very important that this part comes immediately after the dialog command
     dialogResults=$?
@@ -61,7 +65,11 @@ function delayed_button_enablement(){
     echo "Dialog exited with the following code: $dialogResults"
 
     if [ "$dialogResults" = 0 ]; then
-        echo "User acknowledged, continue investigation."
+        echo "User closed window - all done."
+    elif [ "$dialogResults" = 2 ]; then
+        sleep 5
+        osascript -e 'tell app "loginwindow" to «event aevtrrst»'
+        echo "User selected restart button."
     elif [ "$dialogResults" = 10 ]; then
         echo "Exit key was used - user was prompted to exit."
     else

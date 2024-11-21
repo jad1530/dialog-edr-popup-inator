@@ -3,43 +3,39 @@
 
 #Huge shoutout to Trevor Sysock (@BigMacAdmin on Slack) and @adamcodega for helping with these
 #Script to launch swiftDialog alerts within Crowdstrike either within RTR or in a Fusion workflow.
-#this alert style is intended to represent a "medium" severity alert.
+#this alert is a complete script for running remediation.
 
+#local swiftDialog path
 dialogPath="/usr/local/bin/dialog"
 
-# How many seconds do you want to delay the OK button. Users will not be able to dismiss the Dialog window for this many seconds.
-delayButtonDuration=60
+#Initial text
+dialogTitle="Remediation in progress"
+dialogMessage="We're working on removing threats from your computer.  \nPlease stand by.  \n\nThis message will remain on your screen until the issue is resolved."
+dialogInfoText="This is an official message from JWA IT."
+dialogIcon="SF=washer.circle.fill,color=blue"
 
-dialogTitle="IT security alert"
-dialogMessage="We've detected suspicious activity on your computer.  \nPlease stop your work and contact IT for guidance."
-dialogInfoText="This is an official message from IT."
-dialogIcon="SF=exclamationmark.triangle.fill,color=orange,weight=medium"
+#identify the remediation stages
+stage1="Identifying location and impact of threats"
+stage2="Stopping programs and processes associated with threats"
+stage3="Removing files"
+stage4="Cleaning up any traces"
+stage5="Finishing up"
+stage6="All done."
+
+#identify the duration of remediation
+#placeholder - will see if I can identify when CS does a thing
+stage1time=10
+stage2time=10
+stage3time=10
+stage4time=10
+stage5time=10
 
 dialogCommandFile="/var/tmp/dialog.log"
 
 # Button 1 Text
 button1text="Continue"
 
-# execute a dialog command
-function dialog_command(){
-    /bin/echo "$@"  >> "$dialogCommandFile"
-    log_message "$@"
-    sleep .1
-}
-
-function delayed_button_enablement(){
-
-    while [ $delayButtonDuration -gt 0 ]; do
-        dialog_command "button1text: Dismiss in $delayButtonDuration..."
-        sleep .9
-        delayButtonDuration=$(( delayButtonDuration -1 ))
-    done
-    dialog_command "button1text: $button1text"
-    dialog_command "button1: enable"
-}
-
-(
-"delayed_button_enablement" & "$dialogPath" \
+"$dialogPath" \
     --title "$dialogTitle" \
     --message "$dialogMessage" \
     --icon "$dialogIcon" \
@@ -48,12 +44,13 @@ function delayed_button_enablement(){
     --messagealignment center \
     --position center \
     --button1disabled \
-    --blurscreen \
     --iconalpha 1.0 \
     --centericon \
-    --width 600 \
+    --width 35% \
     --ontop "true" \
-    --height 400 \
+    --height 40% \
+    --progress \
+    -b \
 
     #Very important that this part comes immediately after the dialog command
     dialogResults=$?
@@ -71,6 +68,5 @@ function delayed_button_enablement(){
         echo "Exit with an error code."
         exit "$dialogResults"
     fi
-)&
-
+    
 exit
